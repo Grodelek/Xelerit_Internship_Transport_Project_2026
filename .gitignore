@@ -1,0 +1,4 @@
+.idea/
+.env
+*.log
+ride-together/data/
