@@ -37,7 +37,7 @@ public class Office {
 
 	@NotBlank
 	@Size(min = 6, max = 6)
-	@Column(nullable = false, length = 6)
+	@Column(nullable = false, unique = true, length = 6)
 	private String organisationCode;
 
 	public Office(String name, double latitude, double longitude, String organisationCode) {
