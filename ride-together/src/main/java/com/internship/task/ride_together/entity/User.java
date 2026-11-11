@@ -70,6 +70,10 @@ public class User {
 		this.password = password;
 	}
 
+	public void joinOffice(Office office) {
+		this.office = office;
+	}
+
 	@PrePersist
 	void onCreate() {
 		this.createdAt = Instant.now();

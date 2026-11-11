@@ -3,8 +3,10 @@ package com.internship.task.ride_together.service;
 import com.internship.task.ride_together.dto.OfficeRequest;
 import com.internship.task.ride_together.dto.OfficeResponse;
 import com.internship.task.ride_together.entity.Office;
+import com.internship.task.ride_together.entity.User;
 import com.internship.task.ride_together.exception.ResourceNotFoundException;
 import com.internship.task.ride_together.repository.OfficeRepository;
+import com.internship.task.ride_together.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.security.SecureRandom;
@@ -15,9 +17,11 @@ public class OfficeService {
 
     private final OfficeRepository officeRepository;
     private final SecureRandom secureRandom = new SecureRandom();
+    private final UserRepository userRepository;
 
-    public OfficeService(OfficeRepository officeRepository) {
+    public OfficeService(OfficeRepository officeRepository, UserRepository userRepository) {
         this.officeRepository = officeRepository;
+        this.userRepository = userRepository;
     }
 
     private Office getOffice(String name) {
@@ -33,6 +37,15 @@ public class OfficeService {
         Office office = new Office(officeRequest.name(), officeRequest.latitude(),
                 officeRequest.longitude(), generateOrganisationCode());
         return OfficeResponse.from(officeRepository.save(office));
+    }
+
+    @Transactional
+    public void joinOffice(String organisationCode, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
+        Office office = officeRepository.findByOrganisationCode(organisationCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Office with this organisation code does not exist"));
+        user.joinOffice(office);
     }
 
     private String generateOrganisationCode() {

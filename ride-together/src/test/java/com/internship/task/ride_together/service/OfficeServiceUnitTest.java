@@ -3,20 +3,28 @@ package com.internship.task.ride_together.service;
 import com.internship.task.ride_together.dto.OfficeRequest;
 import com.internship.task.ride_together.dto.OfficeResponse;
 import com.internship.task.ride_together.entity.Office;
+import com.internship.task.ride_together.entity.User;
+import com.internship.task.ride_together.exception.ResourceNotFoundException;
 import com.internship.task.ride_together.repository.OfficeRepository;
+import com.internship.task.ride_together.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,6 +34,9 @@ class OfficeServiceUnitTest {
 
 	@Mock
 	private OfficeRepository officeRepository;
+
+	@Mock
+	private UserRepository userRepository;
 
 	@InjectMocks
 	private OfficeService officeService;
@@ -82,5 +93,60 @@ class OfficeServiceUnitTest {
 
 		assertEquals("Saved name", response.name());
 		assertEquals("123456", response.organisationCode());
+	}
+
+	@Test
+	void shouldAssignOfficeToUserWhenCodeIsCorrect() {
+		Office office = new Office("Gdansk HQ", 10.5, 20.5, "123456");
+		User user = createUser();
+		when(userRepository.findByUsername("John")).thenReturn(Optional.of(user));
+		when(officeRepository.findByOrganisationCode("123456")).thenReturn(Optional.of(office));
+
+		officeService.joinOffice("123456", "John");
+
+		assertEquals("Gdansk HQ", user.getOffice().getName());
+	}
+
+	@Test
+	void shouldThrowNotFoundWhenOrganisationCodeIsIncorrect() {
+		User user = createUser();
+		when(userRepository.findByUsername("John")).thenReturn(Optional.of(user));
+		when(officeRepository.findByOrganisationCode("000000")).thenReturn(Optional.empty());
+
+		assertThrows(ResourceNotFoundException.class, () -> officeService.joinOffice("000000", "John"));
+
+		assertNull(user.getOffice());
+	}
+
+	@Test
+	void shouldThrowNotFoundWhenUserDoesNotExist() {
+		when(userRepository.findByUsername("nobody")).thenReturn(Optional.empty());
+
+		assertThrows(ResourceNotFoundException.class, () -> officeService.joinOffice("123456", "nobody"));
+
+		verify(officeRepository, never()).findByOrganisationCode(anyString());
+	}
+
+	@Test
+	void shouldChangeOfficeWhenUserAlreadyBelongsToAnotherOffice() {
+		Office oldOffice = new Office("Old HQ", 10.5, 20.5, "111111");
+		Office newOffice = new Office("New HQ", 30.5, 40.5, "222222");
+		User user = createUser();
+		user.joinOffice(oldOffice);
+		when(userRepository.findByUsername("John")).thenReturn(Optional.of(user));
+		when(officeRepository.findByOrganisationCode("222222")).thenReturn(Optional.of(newOffice));
+
+		officeService.joinOffice("222222", "John");
+
+		assertEquals("New HQ", user.getOffice().getName());
+	}
+
+	private User createUser() {
+		User user = new User("John", "john@example.com", "hashed-password");
+		ReflectionTestUtils.setField(user, "carOwner", true);
+		ReflectionTestUtils.setField(user, "seats", 3);
+		ReflectionTestUtils.setField(user, "latitude", 54.352);
+		ReflectionTestUtils.setField(user, "longitude", 18.6466);
+		return user;
 	}
 }

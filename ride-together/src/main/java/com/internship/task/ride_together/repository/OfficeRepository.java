@@ -9,6 +9,7 @@ import java.util.UUID;
 public interface OfficeRepository extends JpaRepository<Office, UUID> {
 
 	Optional<Office> findByName(String name);
+	Optional<Office> findByOrganisationCode(String organisationCode);
 
 	boolean existsByOrganisationCode(String organisationCode);
 }
