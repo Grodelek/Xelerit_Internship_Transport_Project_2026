@@ -20,3 +20,7 @@ Rules:
 - Do not add comments to code; method and test names should describe the behavior on their own.
 - Keep it simple: no custom annotations, unnecessary abstractions or patterns; choose the simplest solution.
 - Write all code, including strings (error messages, API responses), in English.
+- Work in small steps: one class or one function at a time, then stop and report.
+- Ask before adding classes, annotations, interfaces or patterns that are not in the approved plan.
+- If the plan marks a task as `Human writes code`, write only its tests and review the human's code afterwards; do not write the production code.
+- After implementing, verify by hand: start the app, send `curl` requests, show the real responses, then stop the app and remove test data.

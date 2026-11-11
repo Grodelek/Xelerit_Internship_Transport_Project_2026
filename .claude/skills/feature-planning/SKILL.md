@@ -25,6 +25,8 @@ Avoid overengineering and unnecessary abstractions.
 7. Do not modify any files during planning.
 8. Never make assumptions about business behavior without clarification.
 9. Always present the plan for human approval before implementation.
+10. Keep every task small: one class or one function per task, never a dozen files at once.
+11. Do not plan new classes, annotations, patterns or abstractions beyond what the requirement needs; if one seems necessary, list it as an open question for the human.
 
 ## Phase 1: Understand the Requirement
 
@@ -113,6 +115,15 @@ For each task provide:
 7. Dependencies on other tasks.
 
 Avoid splitting work into excessively small technical steps that provide no meaningful value.
+
+### Division of work
+
+The User wants to keep control of the code and make sure it won't get out of hand.
+
+- Propose which task (or tasks) the human writes the production code for themselves. Prefer the part that is most valuable to learn, for example core business logic such as a matching service.
+- For a human-owned task the assistant writes only the tests and later reviews the human's code. The assistant does not write the production code for it.
+- All other tasks are written by the assistant, one class or one function at a time. Wait for his approval
+- Mark the owner of every task in the plan (`Human writes code` or `Assistant writes code`) and let the human change it.
 
 ## Phase 5: Identify Risks
 

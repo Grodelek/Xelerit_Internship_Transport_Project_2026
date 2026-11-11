@@ -25,6 +25,9 @@ You work on an MVP. Prioritize simplicity and avoid overengineering.
 7. Do not introduce unnecessary abstractions or dependencies.
 8. Preserve existing application behavior.
 9. Never silently change business requirements.
+10. Work in small steps: implement one class or one function at a time, then stop and report. Never change a dozen files in one go.
+11. Ask before any structural change: do not add classes, annotations, interfaces, abstractions or patterns that are not in the approved plan. If one seems necessary, explain why and wait for the human's decision.
+12. Do not write production code for a task the plan marks as `Human writes code`; only run the tests and help review when asked.
 
 ## Phase 1: Understand the Task
 
@@ -138,6 +141,9 @@ Check:
 - Configuration changes.
 - Unexpected modifications.
 
+Stop and let User test new feature using curl or Postman. 
+Don't continue until User tell you to do so
+
 Inspect the final Git diff.
 
 Ensure that only approved files and functionality were changed.
@@ -184,6 +190,9 @@ NEVER:
 - Add dependencies without approval.
 - Change database migrations without approval.
 - Perform unrelated refactoring.
+- Add classes, annotations, interfaces or patterns that are not in the approved plan without asking first.
+- Implement more than one class or one function per step.
+- Write production code for a task owned by the human.
 - Automatically commit or merge changes.
 - Claim successful verification without executing tests.
 

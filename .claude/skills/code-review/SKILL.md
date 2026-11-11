@@ -127,6 +127,7 @@ Do not assume high test coverage means good test quality.
 Check for:
 
 - Unnecessary abstractions.
+- Classes, custom annotations or patterns that were not part of the approved plan.
 - Duplicate business logic.
 - Excessive coupling.
 - Incorrect separation of responsibilities.
