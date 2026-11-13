@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/offices")
-public class OfficeControler {
+public class OfficeController {
 
     private final OfficeService officeService;
 
-    public OfficeControler(OfficeService officeService) {
+    public OfficeController(OfficeService officeService) {
         this.officeService = officeService;
     }
 
