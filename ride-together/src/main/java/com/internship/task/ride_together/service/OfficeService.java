@@ -48,6 +48,16 @@ public class OfficeService {
         user.joinOffice(office);
     }
 
+    public OfficeResponse getOfficeOfUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
+        Office office = user.getOffice();
+        if (office == null) {
+            throw new ResourceNotFoundException("User does not belong to any office");
+        }
+        return OfficeResponse.from(office);
+    }
+
     private String generateOrganisationCode() {
         String code;
         do {

@@ -2,6 +2,7 @@ package com.internship.task.ride_together.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -23,6 +24,7 @@ public class SecurityConfig {
 				.csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/**"))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/auth/**", "/error").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/offices").hasRole("ADMIN")
 						.anyRequest().authenticated())
 				.exceptionHandling(handling -> handling
 						.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))

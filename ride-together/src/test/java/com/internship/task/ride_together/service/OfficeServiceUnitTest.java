@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -139,6 +138,32 @@ class OfficeServiceUnitTest {
 		officeService.joinOffice("222222", "John");
 
 		assertEquals("New HQ", user.getOffice().getName());
+	}
+
+	@Test
+	void shouldReturnOfficeOfUserWhenUserBelongsToOffice() {
+		User user = createUser();
+		user.joinOffice(new Office("Gdansk HQ", 10.5, 20.5, "123456"));
+		when(userRepository.findByUsername("John")).thenReturn(Optional.of(user));
+
+		OfficeResponse response = officeService.getOfficeOfUser("John");
+
+		assertEquals("Gdansk HQ", response.name());
+		assertEquals("123456", response.organisationCode());
+	}
+
+	@Test
+	void shouldThrowNotFoundWhenUserHasNoOffice() {
+		when(userRepository.findByUsername("John")).thenReturn(Optional.of(createUser()));
+
+		assertThrows(ResourceNotFoundException.class, () -> officeService.getOfficeOfUser("John"));
+	}
+
+	@Test
+	void shouldThrowNotFoundWhenUserDoesNotExistForGetOffice() {
+		when(userRepository.findByUsername("nobody")).thenReturn(Optional.empty());
+
+		assertThrows(ResourceNotFoundException.class, () -> officeService.getOfficeOfUser("nobody"));
 	}
 
 	private User createUser() {
